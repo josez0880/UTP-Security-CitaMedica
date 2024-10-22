@@ -23,3 +23,18 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 ## License
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
+
+## Structure
+├── amplify/ # Folder containing your Amplify backend configuration
+│   ├── auth/ # Definition for your auth backend
+│   │   └── resource.tsx
+│   ├── data/ # Definition for your data backend
+│   │   └── resource.ts
+|   ├── backend.ts
+│   └── tsconfig.json
+├── src/ # React UI code
+│   ├── App.tsx # UI code to sync todos in real-time
+│   ├── index.css # Styling for your app
+│   └── main.tsx # Entrypoint of the Amplify client library
+├── package.json
+└── tsconfig.json
