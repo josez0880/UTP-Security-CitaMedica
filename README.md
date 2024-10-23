@@ -24,17 +24,32 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
 
-## Structure
-├── amplify/ # Folder containing your Amplify backend configuration
-│   ├── auth/ # Definition for your auth backend
-│   │   └── resource.tsx
-│   ├── data/ # Definition for your data backend
-│   │   └── resource.ts
-|   ├── backend.ts
-│   └── tsconfig.json
-├── src/ # React UI code
-│   ├── App.tsx # UI code to sync todos in real-time
-│   ├── index.css # Styling for your app
-│   └── main.tsx # Entrypoint of the Amplify client library
-├── package.json
-└── tsconfig.json
+## Explicación de la estructura:
+
+- **amplify/**: Contiene la configuración del backend que se maneja con AWS Amplify.
+  - **auth/**: Define los recursos y la configuración del sistema de autenticación.
+    - `resource.tsx`: Archivo que maneja la configuración o implementación de la autenticación.
+  - **data/**: Define la configuración para el backend relacionado con los datos.
+    - `resource.ts`: Archivo que maneja los recursos de datos del backend (por ejemplo, API o base de datos).
+  - `backend.ts`: Configuración global del backend.
+  - `tsconfig.json`: Configuración de TypeScript para los archivos de backend.
+
+- **public/**: Archivos públicos que se sirven directamente.
+  - `index.html`: Archivo HTML principal de la aplicación.
+  - `favicon.ico`: Ícono del sitio web.
+  - `manifest.json`: Archivo que describe cómo se debe instalar o representar la aplicación en dispositivos móviles.
+
+- **src/**: Código de la interfaz de usuario de React.
+  - **components/**: Componentes reutilizables de la interfaz.
+  - **pages/**: Páginas específicas de la aplicación.
+  - **styles/**: Archivos de estilo CSS.
+    - `index.css` y `App.css`: Archivos que contienen los estilos globales y del componente principal.
+  - **utils/**: Funciones utilitarias o helper functions que se pueden reutilizar.
+  - **services/**: Archivos relacionados con servicios externos o APIs.
+  - **context/**: Archivos que gestionan el contexto global de la aplicación (usando React Context API).
+  - **hooks/**: Custom hooks de React.
+  - `App.tsx`: Componente principal que controla la lógica de la aplicación.
+  - `main.tsx`: Punto de entrada del cliente de React y configuración de Amplify.
+
+- **package.json**: Lista de dependencias y scripts del proyecto.
+- **tsconfig.json**: Configuración de TypeScript del proyecto.
