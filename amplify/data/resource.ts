@@ -1,15 +1,40 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 /*== STEP 1 ===============================================================
-The section below creates a Todo database table with a "content" field. Try
-adding a new "isDone" field as a boolean. The authorization rule below
-specifies that any user authenticated via an API key can "create", "read",
-"update", and "delete" any "Todo" records.
+La sección a continuación crea una tabla de base de datos para el sistema de citas médicas.
 =========================================================================*/
 const schema = a.schema({
-  Todo: a
+  SistemaCitasMedicas: a
     .model({
-      content: a.string(),
+      PK: a.string(),
+      SK: a.string(),
+      Tipo: a.string(),
+
+      // Atributos comunes
+      Nombre: a.string(),
+      Telefono: a.string(),
+      Email: a.string(),
+
+      // Médico
+      Especialidad: a.string(),
+      HorarioDisponible: a.string(),
+      CuposDiarios: a.integer(),
+
+      // Paciente
+      Fecha_Nacimiento: a.string(),
+      Genero: a.string(),
+      Direccion: a.string(),
+
+      // Cita
+      Fecha: a.string(),
+      Hora: a.string(),
+      Motivo: a.string(),
+      Estado: a.string(),
+      MedicoID: a.string(),
+      Duracion: a.integer(),
+
+      // Diagnóstico
+      Descripcion: a.string(),
     }).authorization((allow) => [allow.owner()]),
 });
 
@@ -19,7 +44,6 @@ export const data = defineData({
   schema,
   authorizationModes: {
     defaultAuthorizationMode: "userPool",
-    // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
       expiresInDays: 30,
     },
@@ -27,13 +51,8 @@ export const data = defineData({
 });
 
 /*== STEP 2 ===============================================================
-Go to your frontend source code. From your client-side code, generate a
-Data client to make CRUDL requests to your table. (THIS SNIPPET WILL ONLY
-WORK IN THE FRONTEND CODE FILE.)
-
-Using JavaScript or Next.js React Server Components, Middleware, Server 
-Actions or Pages Router? Review how to generate Data clients for those use
-cases: https://docs.amplify.aws/gen2/build-a-backend/data/connect-to-API/
+Ve a tu código fuente del frontend. Desde tu código del lado del cliente, genera un
+cliente de datos para hacer solicitudes CRUDL a tu tabla.
 =========================================================================*/
 
 /*
@@ -41,16 +60,13 @@ cases: https://docs.amplify.aws/gen2/build-a-backend/data/connect-to-API/
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 
-const client = generateClient<Schema>() // use this Data client for CRUDL requests
+const client = generateClient<Schema>() // usa este cliente de datos para solicitudes CRUDL
 */
 
 /*== STEP 3 ===============================================================
-Fetch records from the database and use them in your frontend component.
-(THIS SNIPPET WILL ONLY WORK IN THE FRONTEND CODE FILE.)
+Obtén registros de la base de datos y úsalos en tus componentes frontend.
 =========================================================================*/
 
-/* For example, in a React component, you can use this snippet in your
-  function's RETURN statement */
-// const { data: todos } = await client.models.Todo.list()
+// const { data: citas } = await client.models.SistemaCitasMedicas.list()
 
-// return <ul>{todos.map(todo => <li key={todo.id}>{todo.content}</li>)}</ul>
+// return <ul>{citas.map(cita => <li key={cita.PK}>{cita.Nombre}</li>)}</ul>
