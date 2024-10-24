@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Container, Typography, TextField, Button, Grid, Paper, Snackbar, MenuItem } from '@mui/material';
+"use client"
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../amplify/data/resource";
 
 const client = generateClient<Schema>();
 
-export default function AgregarMuestras() {
+function AgregarMuestras() {
   const [nombre, setNombre] = useState('');
   const [tipo, setTipo] = useState('Paciente'); // Puede ser 'Paciente' o 'Medico'
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
@@ -13,31 +14,31 @@ export default function AgregarMuestras() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    try {
-      // Verificar si ya existe un registro con el mismo nombre y tipo
-      const existingItems = await client.models.SistemaCitasMedicas.list({
-        filter: { Nombre: { eq: nombre }, Tipo: { eq: tipo } }
-      });
+    // try {
+    //   // Verificar si ya existe un registro con el mismo nombre y tipo
+    //   const existingItems = await client.models.SistemaCitasMedicas.list({
+    //     filter: { Nombre: { eq: nombre }, Tipo: { eq: tipo } }
+    //   });
 
-      if (existingItems.data.length > 0) {
-        setSnackbar({ open: true, message: 'El registro ya existe' });
-        return;
-      }
+    //   if (existingItems.data.length > 0) {
+    //     setSnackbar({ open: true, message: 'El registro ya existe' });
+    //     return;
+    //   }
 
-      // Crear nuevo registro
-      await client.models.SistemaCitasMedicas.create({
-        PK: `${tipo.toUpperCase()}#${new Date().getTime()}`,
-        SK: `${tipo.toUpperCase()}#${new Date().getTime()}`,
-        Tipo: tipo,
-        Nombre: nombre,
-        // Agregar otros campos necesarios aquí
-      });
+    //   // Crear nuevo registro
+    //   await client.models.SistemaCitasMedicas.create({
+    //     PK: `${tipo.toUpperCase()}#${new Date().getTime()}`,
+    //     SK: `${tipo.toUpperCase()}#${new Date().getTime()}`,
+    //     Tipo: tipo,
+    //     Nombre: nombre,
+    //     // Agregar otros campos necesarios aquí
+    //   });
 
-      setSnackbar({ open: true, message: 'Registro creado con éxito' });
-    } catch (error) {
-      console.error("Error al crear el registro:", error);
-      setSnackbar({ open: true, message: 'Error al crear el registro' });
-    }
+    //   setSnackbar({ open: true, message: 'Registro creado con éxito' });
+    // } catch (error) {
+    //   console.error("Error al crear el registro:", error);
+    //   setSnackbar({ open: true, message: 'Error al crear el registro' });
+    // }
   };
 
   return (
@@ -85,3 +86,5 @@ export default function AgregarMuestras() {
     </Container>
   );
 }
+
+export default AgregarMuestras;

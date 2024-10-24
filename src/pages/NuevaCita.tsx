@@ -42,7 +42,7 @@ export default function NuevaCita() {
     event.preventDefault();
     setLoading(true);
 
-    try {
+/*     try {
       await client.models.SistemaCitasMedicas.create({
         PK: `CITA#${new Date().getTime()}`,
         SK: `PACIENTE#1`, // Cambia esto según el paciente actual
@@ -59,7 +59,7 @@ export default function NuevaCita() {
       setSnackbar({ open: true, message: 'Error al crear la cita' });
     } finally {
       setLoading(false);
-    }
+    } */
   };
 
   return (

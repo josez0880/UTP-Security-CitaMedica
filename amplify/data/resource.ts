@@ -9,18 +9,31 @@ const schema = a.schema({
       PK: a.string(),
       SK: a.string(),
       Tipo: a.string(),
+
+      // Atributos comunes
       Nombre: a.string(),
-      Fecha: a.string(),
-      Especialidad: a.string(),
       Telefono: a.string(),
       Email: a.string(),
+
+      // Médico
+      Especialidad: a.string(),
+      HorarioDisponible: a.string(),
+      CuposDiarios: a.integer(),
+
+      // Paciente
       Fecha_Nacimiento: a.string(),
       Genero: a.string(),
       Direccion: a.string(),
-      Fecha_Hora: a.string(),
+
+      // Cita
+      Fecha: a.string(),
+      Hora: a.string(),
       Motivo: a.string(),
       Estado: a.string(),
       MedicoID: a.string(),
+      Duracion: a.integer(),
+
+      // Diagnóstico
       Descripcion: a.string(),
     }).authorization((allow) => [allow.owner()]),
 });
