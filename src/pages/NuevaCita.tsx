@@ -14,8 +14,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "../../amplify/data/resource";
+// import { generateClient } from "aws-amplify/data";
+// import type { Schema } from "../../amplify/data/resource";
 
 const tiposCita = [
   { value: 'general', label: 'Consulta General' },
@@ -29,7 +29,7 @@ const medicos = [
   { value: 'martinez', label: 'Dr. Martínez' },
 ];
 
-const client = generateClient<Schema>();
+// const client = generateClient<Schema>();
 
 export default function NuevaCita() {
   const [fecha, setFecha] = useState<Date | null>(null);
