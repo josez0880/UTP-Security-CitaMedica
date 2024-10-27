@@ -41,25 +41,6 @@ export default function NuevaCita() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
-
-/*     try {
-      await client.models.SistemaCitasMedicas.create({
-        PK: `CITA#${new Date().getTime()}`,
-        SK: `PACIENTE#1`, // Cambia esto según el paciente actual
-        Tipo: tipoCita,
-        Fecha_Hora: fecha?.toISOString() || '',
-        Estado: 'Programada',
-        MedicoID: `MEDICO#${medico}`,
-        // Agrega otros campos necesarios aquí
-      });
-
-      setSnackbar({ open: true, message: 'Cita creada con éxito' });
-    } catch (error) {
-      console.error("Error al crear la cita:", error);
-      setSnackbar({ open: true, message: 'Error al crear la cita' });
-    } finally {
-      setLoading(false);
-    } */
   };
 
   return (
