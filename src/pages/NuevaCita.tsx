@@ -20,7 +20,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { addDays, isBefore, isAfter } from 'date-fns';
-
+import { useNavigate } from 'react-router-dom';
 const especialidades = [
   { value: 'general', label: 'Medicina General' },
   { value: 'cardiologia', label: 'Cardiología' },
@@ -34,7 +34,7 @@ export default function NuevaCita() {
   const [especialidad, setEspecialidad] = useState('');
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
-
+  const navigate = useNavigate();
   const [citaConfirmada, setCitaConfirmada] = useState({
     fecha: null as Date | null,
     hora: '',
@@ -77,7 +77,8 @@ export default function NuevaCita() {
     setTimeout(() => {
       setSnackbar({ open: true, message: 'Cita creada exitosamente. Se ha enviado un correo con los detalles.', severity: 'success' });
       setLoading(false);
-      // Aquí se podría redirigir al usuario a la página de inicio o de citas
+      // Redirigir al usuario a la página de ver citas
+      navigate('/ver-citas');
     }, 1500);
   };
 
