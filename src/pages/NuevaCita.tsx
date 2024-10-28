@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { 
   Container, 
   Typography, 
@@ -8,101 +8,136 @@ import {
   MenuItem, 
   Paper,
   Snackbar,
-  CircularProgress
+  CircularProgress,
+  Step,
+  Stepper,
+  StepLabel,
+  IconButton,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
-// import { generateClient } from "aws-amplify/data";
-// import type { Schema } from "../../amplify/data/resource";
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import { addDays, isBefore, isAfter } from 'date-fns';
 
-const tiposCita = [
-  { value: 'general', label: 'Consulta General' },
-  { value: 'especialidad', label: 'Especialidad' },
-  { value: 'seguimiento', label: 'Seguimiento' },
+const especialidades = [
+  { value: 'general', label: 'Medicina General' },
+  { value: 'cardiologia', label: 'Cardiología' },
+  { value: 'dermatologia', label: 'Dermatología' },
+  { value: 'pediatria', label: 'Pediatría' },
 ];
-
-const medicos = [
-  { value: 'garcia', label: 'Dr. García' },
-  { value: 'rodriguez', label: 'Dra. Rodríguez' },
-  { value: 'martinez', label: 'Dr. Martínez' },
-];
-
-// const client = generateClient<Schema>();
 
 export default function NuevaCita() {
+  const [activeStep, setActiveStep] = useState(0);
   const [fecha, setFecha] = useState<Date | null>(null);
-  const [tipoCita, setTipoCita] = useState('');
-  const [medico, setMedico] = useState('');
+  const [especialidad, setEspecialidad] = useState('');
   const [loading, setLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const [citaConfirmada, setCitaConfirmada] = useState({
+    fecha: null as Date | null,
+    hora: '',
+    especialidad: '',
+    medico: '',
+  });
+
+  const validarFecha = (date: Date | null): boolean => {
+    if (!date) return false;
+    const hoy = new Date();
+    const minDate = addDays(hoy, 1);
+    const maxDate = addDays(hoy, 30);
+    return !isBefore(date, minDate) && !isAfter(date, maxDate);
+  };
+
+  const handleBuscarDisponibilidad = async () => {
+    if (!validarFecha(fecha) || !especialidad) {
+      setSnackbar({ open: true, message: 'Por favor, seleccione una fecha válida y una especialidad.', severity: 'error' });
+      return;
+    }
+
     setLoading(true);
-
-/*     try {
-      await client.models.SistemaCitasMedicas.create({
-        PK: `CITA#${new Date().getTime()}`,
-        SK: `PACIENTE#1`, // Cambia esto según el paciente actual
-        Tipo: tipoCita,
-        Fecha_Hora: fecha?.toISOString() || '',
-        Estado: 'Programada',
-        MedicoID: `MEDICO#${medico}`,
-        // Agrega otros campos necesarios aquí
+    // Simular una llamada a la API para buscar disponibilidad
+    setTimeout(() => {
+      // Simulación de respuesta exitosa
+      setCitaConfirmada({
+        fecha: fecha,
+        hora: '10:00',
+        especialidad: especialidades.find(e => e.value === especialidad)?.label || '',
+        medico: 'Dr. García',
       });
-
-      setSnackbar({ open: true, message: 'Cita creada con éxito' });
-    } catch (error) {
-      console.error("Error al crear la cita:", error);
-      setSnackbar({ open: true, message: 'Error al crear la cita' });
-    } finally {
+      setActiveStep(1);
       setLoading(false);
-    } */
+    }, 1500);
+  };
+
+  const handleConfirmarCita = async () => {
+    setLoading(true);
+    // Simular una llamada a la API para confirmar la cita
+    setTimeout(() => {
+      setSnackbar({ open: true, message: 'Cita creada exitosamente. Se ha enviado un correo con los detalles.', severity: 'success' });
+      setLoading(false);
+      // Aquí se podría redirigir al usuario a la página de inicio o de citas
+    }, 1500);
+  };
+
+  const handleVolver = () => {
+    if (activeStep === 0) {
+      // Aquí se podría implementar la navegación de vuelta al Home
+      console.log('Volver al Home');
+    } else {
+      setActiveStep(0);
+    }
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
       <Container maxWidth="sm">
         <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Crear Nueva Cita Médica
+          <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
+            <Grid item>
+              <IconButton onClick={handleVolver} aria-label="volver">
+                <ArrowBackIcon />
+              </IconButton>
+            </Grid>
+            <Grid item xs>
+              <Typography variant="h5" component="h1">
+                Nueva Cita Médica
           </Typography>
-          <form onSubmit={handleSubmit}>
+            </Grid>
+          </Grid>
+          
+          <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+            <Step>
+              <StepLabel>Selección</StepLabel>
+            </Step>
+            <Step>
+              <StepLabel>Confirmación</StepLabel>
+            </Step>
+          </Stepper>
+
+          {activeStep === 0 ? (
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <DatePicker
                   label="Fecha de la cita"
                   value={fecha}
                   onChange={(newValue) => setFecha(newValue)}
-                  slotProps={{ textField: { fullWidth: true } }}
+                  slotProps={{ 
+                    textField: { fullWidth: true }
+                  }}
+                  shouldDisableDate={(date) => !validarFecha(date)}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   select
-                  label="Tipo de cita"
-                  value={tipoCita}
-                  onChange={(e) => setTipoCita(e.target.value)}
+                  label="Especialidad"
+                  value={especialidad}
+                  onChange={(e) => setEspecialidad(e.target.value)}
                   fullWidth
                 >
-                  {tiposCita.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  select
-                  label="Médico"
-                  value={medico}
-                  onChange={(e) => setMedico(e.target.value)}
-                  fullWidth
-                >
-                  {medicos.map((option) => (
+                  {especialidades.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
@@ -111,17 +146,51 @@ export default function NuevaCita() {
               </Grid>
               <Grid item xs={12}>
                 <Button
-                  type="submit"
                   variant="contained"
                   color="primary"
                   fullWidth
+                  onClick={handleBuscarDisponibilidad}
+                  disabled={loading || !fecha || !especialidad}
+                >
+                  {loading ? <CircularProgress size={24} /> : 'Buscar disponibilidad'}
+                </Button>
+              </Grid>
+            </Grid>
+          ) : (
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Typography variant="h6">Resumen de la Cita</Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography>Fecha: {citaConfirmada.fecha?.toLocaleDateString()}</Typography>
+                <Typography>Hora: {citaConfirmada.hora}</Typography>
+                <Typography>Especialidad: {citaConfirmada.especialidad}</Typography>
+                <Typography>Médico: {citaConfirmada.medico}</Typography>
+                <Typography sx={{ mt: 2 }}>Duración: 20 minutos</Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={handleConfirmarCita}
                   disabled={loading}
                 >
                   {loading ? <CircularProgress size={24} /> : 'Confirmar Cita'}
                 </Button>
               </Grid>
+              <Grid item xs={12}>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  fullWidth
+                  onClick={() => setActiveStep(0)}
+                >
+                  Cancelar
+                </Button>
+              </Grid>
             </Grid>
-          </form>
+          )}
         </Paper>
       </Container>
       <Snackbar
