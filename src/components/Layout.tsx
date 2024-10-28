@@ -7,6 +7,7 @@ const Layout: React.FC = () => {
     <>
       <AppBar position="static" color="primary">
         <Toolbar>
+          <img src="/public/logoipsum-262Short.svg" alt="logo" style={{ paddingRight: '1%' }} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Clínica Salud Total
           </Typography>
