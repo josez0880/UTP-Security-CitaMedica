@@ -14,6 +14,7 @@ const schema = a.schema({
       Nombre: a.string(),
       Telefono: a.string(),
       Email: a.string(),
+      Cedula: a.string(),
 
       // Médico
       Especialidad: a.string(),
@@ -28,7 +29,7 @@ const schema = a.schema({
       // Cita
       Fecha: a.string(),
       Hora: a.string(),
-      Motivo: a.string(),
+      // Motivo: a.string(),
       Estado: a.string(),
       MedicoID: a.string(),
       Duracion: a.integer(),
