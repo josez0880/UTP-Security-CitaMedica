@@ -153,7 +153,7 @@ export default function NuevaCita() {
                   onClick={handleBuscarDisponibilidad}
                   disabled={loading || !fecha || !especialidad}
                 >
-                  {loading ? <CircularProgress size={24} /> : 'Buscar disponibilidad'}
+                  {loading ? <CircularProgress size={24} /> : 'Revisar disponibilidad'}
                 </Button>
               </Grid>
             </Grid>
