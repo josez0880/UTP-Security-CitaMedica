@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Container, Typography, TextField, Button, Grid, Paper, Snackbar, MenuItem } from '@mui/material';
 "use client"
-// import { generateClient } from "aws-amplify/data";
-// import type { Schema } from "../../amplify/data/resource";
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "../../amplify/data/resource";
 
-// const client = generateClient<Schema>();
+const client = generateClient<Schema>();
 
 function AgregarMuestras() {
   const [nombre, setNombre] = useState('');
