@@ -35,14 +35,18 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, CalendarMonth as CalendarIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import { useAuthenticator } from '@aws-amplify/ui-react';
 
 export default function Home() {
+  const { user } = useAuthenticator((context) => [context.user]);
+  const { signOut } = useAuthenticator();
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 4, textAlign: 'center' }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Sistema de Gestión de Citas Médicas
+          Sistema de Gestión de Citas Médicas de {user?.signInDetails?.loginId}
         </Typography>
+        <Button onClick={signOut}>Cerrar sesión</Button>
         <Grid container spacing={4} sx={{ mt: 2 }}>
           <Grid item xs={12} sm={6}>
             <Box 
