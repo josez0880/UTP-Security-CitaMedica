@@ -1,3 +1,39 @@
+/*
+  Componente DetalleCitaDiagnostico:
+  
+  Propósito:
+  - Muestra y permite editar el diagnóstico de una cita médica
+  - Interfaz modal para visualizar/editar detalles
+  
+  Características principales:
+  - Dialog modal de Material-UI 
+  - Campos para diagnóstico y observaciones
+  - Indicador visual del estado de la cita
+  - Funcionalidad de guardado
+  
+  Estados:
+  - PROGRAMADA: Cita pendiente
+  - COMPLETADA: Cita finalizada con diagnóstico
+  - CANCELADA: Cita cancelada
+  
+  Estructura:
+  - StyledDialog: Dialog personalizado con estilos
+  - StatusChip: Chip indicador de estado
+  - Campos de texto para diagnóstico
+  - Botones de acción
+  
+  Integración:
+  - Usa tema personalizado de MUI
+  - Manejo de fechas con date-fns
+  - Notificaciones con Snackbar
+  - Iconos de Material-UI
+  
+  Validaciones:
+  - Campos requeridos antes de guardar
+  - Permisos según estado de cita
+  - Formato de fecha localizado
+*/
+
 import { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -19,20 +55,22 @@ import { Save as SaveIcon, CheckCircle as CheckCircleIcon } from '@mui/icons-mat
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
+// Tema personalizado para el componente
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#1976d2', // Azul para estado PROGRAMADA
     },
     secondary: {
-      main: '#4caf50',
+      main: '#4caf50', // Verde para estado COMPLETADA
     },
     error: {
-      main: '#f44336',
+      main: '#f44336', // Rojo para estado CANCELADA
     },
   },
 });
 
+// Dialog estilizado con espaciado personalizado
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(3),
@@ -42,10 +80,12 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+// Props para el chip de estado
 interface StatusChipProps {
   status: 'PROGRAMADA' | 'COMPLETADA' | 'CANCELADA';
 }
 
+// Chip estilizado que cambia de color según el estado
 const StatusChip = styled(Chip)<StatusChipProps>(({ theme, status }) => ({
   backgroundColor: 
     status === 'PROGRAMADA' 
@@ -56,6 +96,7 @@ const StatusChip = styled(Chip)<StatusChipProps>(({ theme, status }) => ({
   color: theme.palette.common.white,
 }));
 
+// Props del componente principal
 interface DetalleCitaDiagnosticoProps {
   open: boolean;
   onClose: () => void;
@@ -71,13 +112,16 @@ interface DetalleCitaDiagnosticoProps {
   };
 }
 
+// Componente principal para mostrar y editar diagnósticos de citas
 export default function DetalleCitaDiagnostico({ open, onClose, onCompletarCita, cita }: DetalleCitaDiagnosticoProps) {
+  // Estados para manejar el formulario
   const [diagnostico, setDiagnostico] = useState('');
   const [recomendaciones, setRecomendaciones] = useState('');
   const [guardadoProvisional, setGuardadoProvisional] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
+  // Efecto para cargar datos cuando cambia la cita
   useEffect(() => {
     if (cita.status === 'COMPLETADA') {
       setDiagnostico(cita.diagnostico || '');
@@ -89,6 +133,7 @@ export default function DetalleCitaDiagnostico({ open, onClose, onCompletarCita,
     setGuardadoProvisional(false);
   }, [cita]);
 
+  // Manejador para guardar provisionalmente el diagnóstico
   const handleGuardarProvisional = () => {
     // Aquí iría la lógica para guardar provisionalmente
     setGuardadoProvisional(true);
@@ -96,6 +141,7 @@ export default function DetalleCitaDiagnostico({ open, onClose, onCompletarCita,
     setSnackbarOpen(true);
   };
 
+  // Manejador para guardar definitivamente y completar la cita
   const handleGuardarDefinitivo = () => {
     if (diagnostico.trim() === '') {
       setSnackbarMessage('El diagnóstico es obligatorio');
@@ -110,6 +156,7 @@ export default function DetalleCitaDiagnostico({ open, onClose, onCompletarCita,
     }, 1000);
   };
 
+  // Manejador para cerrar el diálogo con confirmación si hay cambios
   const handleClose = () => {
     if (guardadoProvisional && cita.status === 'PROGRAMADA') {
       if (window.confirm('Hay cambios guardados provisionalmente. ¿Está seguro de que desea salir?')) {

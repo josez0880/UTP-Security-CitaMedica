@@ -1,3 +1,40 @@
+/*
+  Componente VerCitasMedicas:
+
+  Propósito:
+  - Permite a los pacientes ver y gestionar sus citas médicas programadas
+  - Ofrece funcionalidad de filtrado y cancelación de citas
+
+  Características principales:
+  - Lista de citas con información detallada
+  - Filtros por fecha y estado
+  - Funcionalidad para cancelar citas
+  - Interfaz responsiva con Material-UI
+
+  Estados de citas:
+  - activa: Citas pendientes por atender
+  - completada: Citas ya realizadas
+  - cancelada: Citas canceladas por el paciente
+
+  Estructura de datos:
+  - Interface Cita con: id, fecha, especialidad, médico y estado
+  - Mock data temporal para desarrollo
+  - Preparado para integración con API real
+
+  Funcionalidades:
+  - Carga asíncrona de citas
+  - Diálogo de confirmación para cancelaciones
+  - Sistema de notificaciones con Snackbar
+  - Validaciones de tiempo para cancelaciones
+
+  Integración:
+  - Usa componentes de Material-UI
+  - Manejo de fechas con date-fns
+  - Sistema de estados con useState/useEffect
+  - Preparado para autenticación de usuario
+*/
+
+// Importaciones necesarias para el funcionamiento del componente
 import { useState, useEffect } from 'react';
 import { 
   Container, Typography, Grid, Card, CardContent, TextField, 
@@ -10,13 +47,15 @@ import { es } from 'date-fns/locale';
 import { differenceInHours } from 'date-fns';
 import { AlertColor } from '@mui/material';
 
-// Simulación de datos de citas (reemplazar con llamada a API real)
+// Datos de prueba que simulan citas médicas
+// En producción estos datos vendrían de una API
 const mockCitas = [
   { id: 1, fecha: new Date('2024-11-5'), especialidad: 'Cardiología', medico: 'Dr. Juan Pérez', estado: 'activa' },
   { id: 2, fecha: new Date('2024-03-05'), especialidad: 'Dermatología', medico: 'Dra. Ana García', estado: 'completada' },
   { id: 3, fecha: new Date('2024-03-10'), especialidad: 'Pediatría', medico: 'Dr. Carlos Rodríguez', estado: 'cancelada' },
 ];
 
+// Interfaz que define la estructura de datos de una cita médica
 interface Cita {
   id: number;
   fecha: Date;
@@ -26,64 +65,79 @@ interface Cita {
 }
 
 export default function VerCitasMedicas() {
+  // Estado para almacenar el listado de citas
   const [citas, setCitas] = useState<Cita[]>([]);
+  // Estado para manejar la carga inicial de datos
   const [loading, setLoading] = useState(true);
+  // Estado para manejar errores en la carga de datos
   const [error, ] = useState(null);
+  // Estados para los filtros de búsqueda
   const [filtroFecha, setFiltroFecha] = useState<Date | null>(null);
   const [filtroEstado, setFiltroEstado] = useState('');
+  // Estados para el manejo del diálogo de cancelación
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
   const [selectedCita, setSelectedCita] = useState<Cita | null>(null);
   const [cancelLoading, setCancelLoading] = useState(false);
+  // Estado para las notificaciones del sistema
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: AlertColor }>({ 
     open: false, 
     message: '', 
     severity: 'info' 
   });
 
+  // Efecto para cargar los datos iniciales
   useEffect(() => {
-    // Simular carga de datos
+    // Simulación de llamada a API
     setTimeout(() => {
       setCitas(mockCitas);
       setLoading(false);
     }, 1000);
   }, []);
 
+  // Función para filtrar las citas según los criterios seleccionados
   const citasFiltradas = citas.filter(cita => 
     (!filtroFecha || new Date(cita.fecha).toDateString() === filtroFecha.toDateString()) &&
     (!filtroEstado || cita.estado === filtroEstado)
   );
 
+  // Función para resetear los filtros de búsqueda
   const limpiarFiltros = () => {
     setFiltroFecha(null);
     setFiltroEstado('');
   };
 
+  // Función que verifica si una cita puede ser cancelada
+  // Solo se permite cancelar citas activas con más de 24 horas de anticipación
   const isCancelable = (cita: Cita): boolean => {
     return cita.estado === 'activa' && differenceInHours(cita.fecha, new Date()) > 24;
   };
 
+  // Manejador para iniciar el proceso de cancelación
   const handleCancelClick = (cita: Cita) => {
     setSelectedCita(cita);
     setOpenCancelDialog(true);
   };
 
+  // Manejador para confirmar la cancelación de una cita
   const handleCancelConfirm = async () => {
     setCancelLoading(true);
-    // Simular proceso de cancelación
+    // Simulación de proceso de cancelación en el backend
     await new Promise(resolve => setTimeout(resolve, 2000));
     setCancelLoading(false);
     setOpenCancelDialog(false);
-    // Actualizar el estado de la cita
+    // Actualización del estado local de la cita
     setCitas(prevCitas =>
       prevCitas.map(c => (selectedCita && c.id === selectedCita.id) ? {...c, estado: 'cancelada'} : c)
     );
     setSnackbar({ open: true, message: 'Cita cancelada con éxito', severity: 'success' });
   };
 
+  // Manejador para cerrar las notificaciones
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  // Renderizado condicional para estado de carga
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -92,6 +146,7 @@ export default function VerCitasMedicas() {
     );
   }
 
+  // Renderizado condicional para estado de error
   if (error) {
     return <Alert severity="error">{error}</Alert>;
   }

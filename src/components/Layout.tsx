@@ -1,3 +1,9 @@
+/*
+  Componente Layout:
+  - Define la estructura de la aplicación con una barra de navegación superior
+  - Incluye un logo y un título
+  - Utiliza Material-UI para estilizar la barra de navegación
+*/
 import React from 'react';
 import { AppBar, Toolbar, Typography } from '@mui/material';
 import { Outlet } from 'react-router-dom';
