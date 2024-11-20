@@ -1,4 +1,30 @@
-// import React from 'react';
+/*
+    Este archivo representa la página principal (Home) del Sistema de Gestión de Citas Médicas.
+
+    De accaso solo para pacientes
+    Componentes principales:
+    - Utiliza Material-UI para los elementos de interfaz
+    - Implementa un diseño responsivo con Grid
+    - Incluye botones de navegación a otras secciones
+
+    Funcionalidad:
+    - Botón para crear nueva cita médica (/nueva-cita)
+    - Botón para ver citas existentes (/ver-citas)
+    - Diseño centrado con animaciones hover en los botones
+
+    Estructura:
+    - Container: Contenedor principal con ancho máximo "sm"
+    - Paper: Tarjeta elevada que contiene todo el contenido
+    - Typography: Títulos y textos descriptivos
+    - Grid: Sistema de rejilla para organizar los botones
+    - Box: Contenedor para los enlaces de navegación
+    - Button: Botones interactivos con iconos
+
+    Estilos:
+    - Usa sistema de espaciado de MUI (mt: margin-top, p: padding)
+    - Animaciones de escala en hover
+    - Colores temáticos de Material-UI
+*/
 import { 
   Button, 
   Container, 
@@ -9,14 +35,18 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, CalendarMonth as CalendarIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import { useAuthenticator } from '@aws-amplify/ui-react';
 
 export default function Home() {
+  const { user } = useAuthenticator((context) => [context.user]);
+  const { signOut } = useAuthenticator();
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 4, textAlign: 'center' }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Sistema de Gestión de Citas Médicas
+          Sistema de Gestión de Citas Médicas de {user?.signInDetails?.loginId}
         </Typography>
+        <Button onClick={signOut}>Cerrar sesión</Button>
         <Grid container spacing={4} sx={{ mt: 2 }}>
           <Grid item xs={12} sm={6}>
             <Box 

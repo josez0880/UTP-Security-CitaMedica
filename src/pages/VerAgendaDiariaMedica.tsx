@@ -1,3 +1,38 @@
+/*
+  Componente VerAgendaDiariaMedica:
+  
+  Propósito:
+  - Muestra la agenda diaria de citas médicas para los doctores
+  - Permite visualizar y gestionar las citas programadas del día
+  
+  Características principales:
+  - Interfaz organizada con Material-UI
+  - Filtrado de citas por estado (Programada/Completada/Cancelada)
+  - Visualización detallada de cada cita
+  - Integración con DetalleCitaDiagnostico para ver/editar diagnósticos
+  
+  Estados de citas:
+  - PROGRAMADA: Citas pendientes (azul)
+  - COMPLETADA: Citas finalizadas (verde) 
+  - CANCELADA: Citas canceladas (rojo)
+  
+  Estructura de datos:
+  - Usa formato date-fns para manejo de fechas
+  - Integración con tema personalizado de MUI
+  - Componentes estilizados para consistencia visual
+  
+  Funcionalidades:
+  - Expansión/colapso de detalles por cita
+  - Visualización de diagnósticos
+  - Interfaz responsive con Grid system
+  - Chips indicadores de estado
+  
+  Integración:
+  - Conecta con DetalleCitaDiagnostico.tsx
+  - Usa iconos de Material-UI
+  - Manejo de estados con useState/useEffect
+*/
+
 import { useState, useEffect } from 'react';
 import { 
   Container, 
@@ -21,7 +56,9 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import DetalleCitaDiagnostico from '../components/DetalleCitaDiagnostico.tsx';
 
-// Define custom theme
+/**
+ * Tema personalizado para la aplicación
+ */
 const theme = createTheme({
   palette: {
     primary: {
@@ -46,7 +83,9 @@ interface StyledCardProps {
   status?: 'PROGRAMADA' | 'COMPLETADA' | 'CANCELADA';
 }
 
-// Styled components
+/**
+ * Componente Card estilizado según el estado de la cita
+ */
 const StyledCard = styled(Card)<StyledCardProps>(({ theme, status }) => ({
   marginBottom: theme.spacing(2),
   borderLeft: `5px solid ${
@@ -62,6 +101,9 @@ interface StatusChipProps {
   status: 'PROGRAMADA' | 'COMPLETADA' | 'CANCELADA';
 }
 
+/**
+ * Chip estilizado que muestra el estado de la cita
+ */
 const StatusChip = styled(Chip)<StatusChipProps>(({ theme, status }) => ({
   backgroundColor:
     status === 'PROGRAMADA'
@@ -92,6 +134,10 @@ interface Appointment {
   recomendaciones?: string;
 }
 
+/**
+ * Componente principal que muestra la agenda diaria médica
+ * Permite ver, filtrar y gestionar las citas médicas del día
+ */
 export default function VerAgendaDiariaMedica() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [counts, setCounts] = useState({ PROGRAMADA: 0, COMPLETADA: 0, CANCELADA: 0 });
@@ -104,6 +150,10 @@ export default function VerAgendaDiariaMedica() {
     updateCounts(mockAppointments);
   }, []);
 
+  /**
+   * Actualiza los contadores de citas por estado
+   * @param appointments - Array de citas a contar
+   */
   const updateCounts = (appointments: Appointment[]) => {
     const newCounts = appointments.reduce((acc: Record<'PROGRAMADA' | 'COMPLETADA' | 'CANCELADA', number>, appointment) => {
       acc[appointment.status]++;  
@@ -112,6 +162,9 @@ export default function VerAgendaDiariaMedica() {
     setCounts(newCounts);
   };
 
+  /**
+   * Agrupa las citas por su estado
+   */
   const groupedAppointments = appointments.reduce((acc: Record<'PROGRAMADA' | 'COMPLETADA' | 'CANCELADA', Appointment[]>, appointment) => {
     if (!acc[appointment.status]) {
       acc[appointment.status] = [];
@@ -120,15 +173,28 @@ export default function VerAgendaDiariaMedica() {
     return acc;
   }, { PROGRAMADA: [], COMPLETADA: [], CANCELADA: [] });
 
+  /**
+   * Abre el diálogo de detalles de una cita
+   * @param appointment - Cita seleccionada para ver detalles
+   */
   const handleOpenDetail = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setDetailDialogOpen(true);
   };
 
+  /**
+   * Cierra el diálogo de detalles
+   */
   const handleCloseDetail = () => {
     setDetailDialogOpen(false);
   };
 
+  /**
+   * Marca una cita como completada y actualiza su diagnóstico
+   * @param id - ID de la cita a completar
+   * @param diagnostico - Diagnóstico médico
+   * @param recomendaciones - Recomendaciones médicas
+   */
   const handleCompletarCita = (id: number, diagnostico: string, recomendaciones: string) => {
     const updatedAppointments = appointments.map(appointment =>
       appointment.id === id ? { ...appointment, status: 'COMPLETADA' as 'COMPLETADA', diagnostico, recomendaciones } : appointment
@@ -137,6 +203,11 @@ export default function VerAgendaDiariaMedica() {
     updateCounts(updatedAppointments as Appointment[]);
   };
 
+  /**
+   * Renderiza las citas según su estado
+   * @param statusAppointments - Array de citas filtradas por estado
+   * @param status - Estado de las citas a renderizar
+   */
   const renderAppointments = (statusAppointments: Appointment[], status: 'PROGRAMADA' | 'COMPLETADA' | 'CANCELADA') => (
     statusAppointments.length > 0 ? (
       statusAppointments.map((appointment) => (
