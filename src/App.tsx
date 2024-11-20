@@ -12,7 +12,16 @@ function App() {
   return (
     <Router>
       <React.StrictMode>
-        <Authenticator>
+        <Authenticator components={{
+              Header() {
+                return (
+                  <div style={{ textAlign: 'center', padding: '20px' }}>
+                    <img src="../public/logoipsum-262Short.svg" alt="logo" style={{ paddingRight: '1%'}} />
+                    <h1>Clínica Salud Total</h1>
+                  </div>
+                );
+              },
+            }}>
           <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />

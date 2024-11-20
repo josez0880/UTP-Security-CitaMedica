@@ -13,14 +13,14 @@
 
   /* Colores de fondo */
   --bg-color: #ffffff;
-  --bg-color-alt: #f4f4f4;
+  --bg-color-alt: #903535;
 
   /* Colores de texto */
   --text-color: #333333;
   --text-color-light: #666666;
 
   /* Fuentes */
-  --font-primary: 'Hind Madurai', serif;
+  --font-primary: 'Hind Madurai', sans-serif;
   --font-secondary: 'Montserrat', sans-serif;
 
   /* Tamaños de fuente */
