@@ -1,3 +1,42 @@
+/*
+  Backend y Lógica de Negocio:
+
+  - Integración con AWS Amplify:
+    - Se espera integrar con Amazon Cognito para autenticación del paciente
+    - Los datos de citas se almacenarán en DynamoDB a través de AppSync
+    - Schema GraphQL necesario para manejar las citas médicas
+
+  - Modelo de Datos Principal:
+    PK: CITA#{ID}
+    SK: PACIENTE#{ID}
+    GSI1: Por fecha para búsquedas eficientes
+    Atributos: fecha, hora, especialidad, idMedico, estado
+
+  - Validaciones Importantes:
+    - Verificar disponibilidad del médico
+    - No permitir citas en fechas pasadas
+    - Límite de 30 días para agendar
+    - Validar horario laboral
+    - Evitar duplicidad de citas
+
+  - Flujo de Datos:
+    1. Cliente selecciona especialidad -> Query para médicos disponibles
+    2. Selecciona fecha -> Query para horarios disponibles
+    3. Confirma cita -> Mutation para crear registro
+    4. Notificación por SNS/SES al paciente
+
+  - Manejo de Estados:
+    - PROGRAMADA
+    - CONFIRMADA
+    - CANCELADA
+    - COMPLETADA
+
+  - Permisos y Seguridad:
+    - Solo pacientes autenticados pueden crear citas
+    - Restricción de modificación post-confirmación
+    - Logs de auditoría en CloudWatch
+*/
+
 import  { useState } from 'react';
 import { 
   Container, 
@@ -21,6 +60,8 @@ import { es } from 'date-fns/locale';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { addDays, isBefore, isAfter } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+
+// Lista de especialidades médicas disponibles
 const especialidades = [
   { value: 'general', label: 'Medicina General' },
   { value: 'cardiologia', label: 'Cardiología' },
@@ -42,14 +83,23 @@ export default function NuevaCita() {
     medico: '',
   });
 
+  /**
+   * Valida si una fecha es válida para agendar una cita
+   * @param date - Fecha a validar
+   * @returns boolean - true si la fecha es válida, false si no lo es
+   */
   const validarFecha = (date: Date | null): boolean => {
     if (!date) return false;
     const hoy = new Date();
-    const minDate = addDays(hoy, 1);
-    const maxDate = addDays(hoy, 30);
+    const minDate = addDays(hoy, 1); // Mínimo un día después
+    const maxDate = addDays(hoy, 30); // Máximo 30 días después
     return !isBefore(date, minDate) && !isAfter(date, maxDate);
   };
 
+  /**
+   * Busca disponibilidad de citas para la fecha y especialidad seleccionadas
+   * Simula una llamada a API con un timeout
+   */
   const handleBuscarDisponibilidad = async () => {
     if (!validarFecha(fecha) || !especialidad) {
       setSnackbar({ open: true, message: 'Por favor, seleccione una fecha válida y una especialidad.', severity: 'error' });
@@ -71,6 +121,10 @@ export default function NuevaCita() {
     }, 1500);
   };
 
+  /**
+   * Confirma la cita médica y envía la información al backend
+   * Simula una llamada a API con un timeout
+   */
   const handleConfirmarCita = async () => {
     setLoading(true);
     // Simular una llamada a la API para confirmar la cita
@@ -82,6 +136,11 @@ export default function NuevaCita() {
     }, 1500);
   };
 
+  /**
+   * Maneja la navegación hacia atrás en el flujo de creación de cita
+   * Si está en el primer paso, vuelve al Home
+   * Si está en otro paso, vuelve al paso anterior
+   */
   const handleVolver = () => {
     if (activeStep === 0) {
       // Aquí se podría implementar la navegación de vuelta al Home
